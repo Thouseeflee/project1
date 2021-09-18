@@ -1,0 +1,159 @@
+<% layout('layouts/Boilerplate') %>
+    <link rel="stylesheet" href="/stylesheet/stars.css">
+
+
+    <div class="row">
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <img src="<%= celeb.image %> " class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <%= celeb.name %>
+                    </h5>
+                    <p class="card-text text-muted">
+                        <%= celeb.work %>
+                    </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Age : <%= celeb.age %>
+                    </li>
+                    <li class="list-group-item">Net Worth : <%= celeb.networth %>
+                    </li>
+                    <li class="list-group-item">Current Place : <%= celeb.place %>
+                    </li>
+                    <li class="list-group-item text-muted">Info Owns :
+                        <b>
+                            <%= celeb.user.username %>
+                        </b>
+                    </li>
+                </ul>
+                <p>
+                    <% if(currentUser) {%>  
+                        <% if(celeb.likes.some(function(like){return like.equals(currentUser._id)})) { %> 
+                        <button class="btn-like btn btn-sm btn-danger">Liked</button>                      
+                        <% }else { %>
+                        <button class="btn-like btn btn-sm btn-secondary">Like</button>     
+                        <% } %>                  
+                        <% } %> 
+                        <span class="nlikes"><%= celeb.likes.length%> </span>
+                </p>
+
+                <a href="/celeb" class="btn btn-success">All Thread</a>
+
+
+            </div>
+            <br>
+            <%if(currentUser && celeb.user.equals(currentUser._id)) {%>
+                <form action="/celeb/<%= celeb._id %>?_method=DELETE " method="POST">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+                <% } %>
+        </div>
+
+        <div class="col-md-6">
+            <!-- <h2>Kick Out a Comment</h2>
+            <form action="">
+                <div class="mb-3">
+                    <label class="form-label" for="comment">Comment</label>
+                </div>
+                <div class="mb-2">
+                    <textarea class="form-control" name="celeb[comment]" id="comment" cols="30" rows="3"></textarea>
+                </div>
+            </form> -->
+            <% if(currentUser) { %>
+                <h2 class="mb-3">KickOut a Comment</h2>
+                <form action="/celeb/<%= celeb._id %>/comments " method="POST" class="mb-2 validated-form" novalidate>
+                    <div class="mb-1">
+                        <!-- <label class="form-label" for="review">Kick Points</label>
+                        <input class="form-range" type="range" min="0" max="5" name="celeb[points]" id="review"> -->
+
+                        <fieldset class="starability-basic">
+                            <!-- <legend>First rating:</legend> -->
+                            <input type="radio" id="no-rate" class="input-no-rate" name="celeb[points]" value="0"
+                                checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="celeb[points]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="celeb[points]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="celeb[points]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="celeb[points]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="celeb[points]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+                    </div>
+
+
+
+                    <div class="mb-2">
+                        <label for="body">Comment</label>
+                        <textarea class="form-control" name="celeb[comment]" id="body" cols="30" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-success">Submit</button>
+                </form>
+                <% } %>
+                    <% if(!currentUser && celeb.comments.length) {%>
+                        <h2 class="text-center">Kick<span style="color: darkseagreen;">IN</span> Comments</h2>
+                        <% } %>
+
+                            <% for(let Celeb of celeb.comments) { %>
+                                <div class="mb-3 card">
+                                    <div class="card-body">
+                                        <h3></h3>
+                                        <p class="starability-result" data-rating="<%= Celeb.points %>">
+                                            Rated: <%= Celeb.points %>
+                                        </p>
+                                        <h6 class="card-subtitle mb-2 text-muted"> Comment by <%= Celeb.user.username %>
+                                        </h6>
+                                        <p class="card-text">
+                                            <%= Celeb.comment %>
+                                        </p>
+                                        <% if(currentUser && Celeb.user._id.equals(currentUser._id)) {%>
+                                            <form action="/celeb/<%= celeb._id %>/comments/<%= Celeb._id %>"
+                                                method="POST">
+                                                <button class="btn btn-sm btn-danger">DELETE</button>
+                                            </form>
+                                            <% } %>
+                                    </div>
+                                </div>
+                                <% } %>
+        </div>
+    </div>
+
+
+    <script>
+        const buttuon = document.querySelector('.btn-like');
+        const likes = document.querySelector('.nlikes');
+  
+  
+  buttuon.addEventListener('click' , function(e) {
+      e.preventDefault();
+  console.log(this.textContent);
+        if(this.textContent === "Liked") {
+      this.textContent = "Like";
+      this.classList = "btn btn-sm btn-secondary"
+    }else if(this.textContent ==="Like") {
+      this.textContent = "Liked";
+      this.classList = "btn btn-sm btn-danger"
+    }
+  
+  
+  
+      axios.get(`/celeb/<%=celeb._id%>/like`)
+        .then(function(res) {
+            console.log("woking");
+            console.log(res);
+            likes.innerText = res.data.totalLikes;
+  
+        })
+        .catch(function(e){
+            console.log("error",e);
+        })
+  
+  
+  })
+  
+  
+      </script>

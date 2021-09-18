@@ -1,0 +1,118 @@
+<% layout('layouts/Boilerplate') %>
+<%        let hash = 0 %> 
+
+    <div class="mb-3">
+        <!-- <h1 class="text-center">Kick<span style="color: darkseagreen;">IN</span> Celebrities</h1> -->
+    </div>
+    <div class="row">
+     <%#window.addEventListener('scroll', () => {%>
+        
+        <%# if(window.scrollY + window.innerHeight >= document.documentElement.scrollHeight){  %>
+                
+            
+
+        <% for(let Celeb of celeb) {%>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <img width="580px" loading="lazy" src="<%= Celeb.image %> "class="img-fluid img-thumbnail card-img-top" alt="...">
+                    <div class="card-body">
+                        <% hash++ %> 
+                        <h6>#<%=hash%></h6> 
+                        <h5 class="card-title">
+                            <%= Celeb.name %>
+                        </h5>
+                        <p class="card-text text-muted">
+                            <%= Celeb.work %>
+                        </p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Age : <%= Celeb.age %>
+                        </li>
+                        <li class="list-group-item">Net Worth : <%= Celeb.networth %>
+                        </li>
+                        <li class="list-group-item">Current Place : <%= Celeb.place %>
+                        </li>
+                    </ul>
+                    <div class="card-body">
+                        <h6 class="card-subtitle"><span class="text-muted">Kicked By :</span>
+                            <%= Celeb.user.username %>
+                            <i class="fas fa-fire"></i>
+                        </h6>
+                        <div class="mt-2">
+                                <% if(currentUser) {%>  
+                                    <% if(Celeb.likes.some(function(like){return like.equals(currentUser._id)})) { %> 
+                                    <button data="<%= Celeb._id %>" class="btn-like btn btn-sm btn-danger">Liked</button>                      
+                                    <% }else { %>
+                                    <button data="<%= Celeb._id %>" class="btn-like btn btn-sm btn-secondary">Like</button>     
+                                    <% } %>                  
+                                    <% } %> 
+                                    <!-- <button class="btn btn-like btn-sm btn-secondary disabled"></button>  -->
+                                    <span class="nLikes"><%= Celeb.likes.length %></span>
+                        </div>
+                    </div>
+
+
+                    <a href="/celeb/<%= Celeb._id %>" class="btn btn-success">Visit Thread</a>
+                </div>
+
+            </div>
+
+            <% } %>
+<%# }}) %> 
+
+    </div>
+     
+    <script>
+           
+  
+
+      const buttuon = document.querySelectorAll('.btn-like');
+    //   const likes = document.querySelector('.nLikes');
+
+
+for (let btn of buttuon) {
+
+    btn.addEventListener('click' , function(e) {
+    e.preventDefault();
+
+    const likeCounterSpan = this.previousElementSibling.children[0];
+     console.log(likeCounterSpan)
+
+    if(this.textContent === "Liked") {
+      this.textContent = "Like";
+      this.classList = "btn btn-sm btn-secondary"
+    }else if(this.textContent ==="Like") {
+      this.textContent = "Liked";
+      this.classList = "btn btn-sm btn-danger"
+    }
+    const camp_id = this.getAttribute("data");
+      axios.get(`/celeb/${camp_id}/like`)
+        .then(function(res) {
+            console.log("woking");
+            likeCounterSpan.innerText = res.data.totalLikes
+  
+        })
+        .catch(function(e){
+            console.log("error",e);
+        })
+  
+
+
+})
+
+}
+
+
+window.addEventListener('scroll', function() {
+    console.log(window.innerHeight);
+    
+
+    if(window.scrollY + window.innerHeight >= document.documentElement.scrollHeight){
+        console.log('bottom');
+        
+    }
+})
+
+    </script>
+

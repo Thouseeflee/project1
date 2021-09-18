@@ -1,0 +1,43 @@
+<% layout('layouts/Boilerplate') %>
+
+
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <h1 class="text-center">Kick in New Celeb </h1>
+
+            <form action="/celeb" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label" for="name">Name</label>
+                    <input class="form-control" type="text" id="name" name="celeb[name]" placeholder="Name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="age">Age</label>
+                    <input class="form-control" type="number" id="age" name="celeb[age]" placeholder="Age" required>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label"></label>
+                    <input class="form-control" type="file" id="image" name="image" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="work">Position</label>
+                    <input class="form-control" type="text" id="work" name="celeb[work]" placeholder="Position"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="networth">Net Worth</label>
+                    <input class="form-control" type="text" id="networth" name="celeb[networth]" placeholder="Net Worth"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="place">Born Place</label>
+                    <input type="text" id="place" class="form-control" placeholder="place" name="celeb[place]" required>
+
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-success">submit</button>
+                    <a class="btn btn-danger " href="/celeb">Cancel</a>
+
+                </div>
+            </form>
+        </div>
+    </div>
